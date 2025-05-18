@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Beam in Codespaces</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #browser-container { width: 100%; height: 70vh; border: 1px solid #ddd; margin-top: 20px; }
+        iframe { width: 100%; height: 100%; border: none; }
+        button { padding: 10px 15px; background: #0078d4; color: white; border: none; cursor: pointer; }
+        button:hover { background: #106ebe; }
+    </style>
+</head>
+<body>
+    <h1>Hyper Beam Remote Browser</h1>
+    <button id="createSession">Start New Session</button>
+    <div id="browser-container">
+        <p>Click "Start New Session" to launch a remote browser.</p>
+    </div>
+
+    <script>
+        document.getElementById('createSession').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/sessions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('browser-container').innerHTML = `
+                        <iframe src="${data.embedUrl}" allow="fullscreen"></iframe>
+                    `;
+                } else {
+                    alert("Error: " + (data.error || "Failed to create session"));
+                }
+            } catch (error) {
+                alert("Network error: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
